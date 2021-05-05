@@ -1,5 +1,31 @@
 {% extends "network/layout.html" %}
+{% load static %}
+
+{% block script %}
+    {% if user.is_authenticated %}
+        <script src="{% static 'network/js.js' %}"></script>
+    {% endif %}
+{% endblock %}
 
 {% block body %}
-    TODO
+    {% if not user.is_authenticated %}
+        <h1>Sign in to start posting.</h1>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+        <div class="row justify-content-center">
+            <div class="col-6" id='tweetBox'>
+                <form action='{% url "tweet" %}' method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <textarea class="form-control" id="tweet" rows="3" placeholder="What are you thinking?" required autofocus maxlength="140" name="tweet"></textarea>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary float-right" id="tweetButton">Tweet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
+

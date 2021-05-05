@@ -1,0 +1,17 @@
+{% extends "network/layout.html" %}
+{% load static %}
+{% load extratags %}
+
+{% block script %}
+    {% if user.is_authenticated %}
+        <script src="{% static 'network/alltweets.js' %}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-6" id="tweetCol">
+
+        </div>
+    </div>
+{% endblock %}

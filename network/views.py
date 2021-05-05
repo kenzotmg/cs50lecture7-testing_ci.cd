@@ -3,8 +3,9 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
-from .models import User
+from .models import User,Tweet
 
 
 def index(request):
@@ -61,3 +62,35 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def postTweet(request):
+    if request.method == "GET":
+        return HttpResponseRedirect(reverse("index"))
+    elif request.method == "POST":
+        tweetContent = request.POST['tweet']
+        author = request.user
+
+        try:
+            tweet = Tweet(content=tweetContent,author=author)
+            tweet.save()
+        except Exception as e:
+            print(f"ERROR: {e}")
+
+        return HttpResponseRedirect(reverse("index"))
+
+@login_required(login_url='/login')
+def allTweets(request):
+    if request.method == 'GET':
+        tweets = ''
+        try:
+            tweets = Tweet.objects.all()
+        except Exception as e:
+            print(f"ERROR: {e}")
+            return render(request,"network/index.html")
+        if tweets:
+            tweets = tweets.order_by("-timestamp").all()
+            return render(request,"network/alltweets.html", {
+                "tweets" : tweets
+            })
+        else:
+            return render(request,"network/alltweets.html")
